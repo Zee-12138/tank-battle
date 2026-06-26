@@ -846,7 +846,7 @@ function loadLevel(lvl) {
     // 深拷贝地图
     map = LEVEL_MAPS[mapIndex].map(row => [...row]);
 
-    player = new PlayerTank(WIDTH / 2, HEIGHT - TILE_SIZE * 2);
+    player = new PlayerTank(WIDTH / 2, HEIGHT - TILE_SIZE * 3);
 
     enemies = [];
     bullets = [];
@@ -972,7 +972,7 @@ function playerDie() {
         // 重生
         setTimeout(() => {
             player.x = WIDTH / 2;
-            player.y = HEIGHT - TILE_SIZE * 2;
+            player.y = HEIGHT - TILE_SIZE * 3;
             player.alive = true;
             player.invincible = true;
             player.invincibleTimer = RESPAWN_GUARD_TIME;
