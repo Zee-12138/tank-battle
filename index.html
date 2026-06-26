@@ -648,17 +648,18 @@ class PlayerTank extends Tank {
 
         if (!this.alive) return;
 
-        if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+        // 用 e.code 物理键码检测（ArrowUp/KeyW 等，跨所有浏览器一致）
+        if (keys['ArrowUp'] || keys['KeyW']) {
             this.move(DIR.UP, tanks);
-        } else if (keys['ArrowDown'] || keys['s'] || keys['S']) {
+        } else if (keys['ArrowDown'] || keys['KeyS']) {
             this.move(DIR.DOWN, tanks);
-        } else if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+        } else if (keys['ArrowLeft'] || keys['KeyA']) {
             this.move(DIR.LEFT, tanks);
-        } else if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+        } else if (keys['ArrowRight'] || keys['KeyD']) {
             this.move(DIR.RIGHT, tanks);
         }
 
-        if ((keys[' '] || keys['Space'] || keys['j'] || keys['J']) && !this.invincible) {
+        if ((keys['Space'] || keys['KeyJ']) && !this.invincible) {
             this.shoot();
         }
     }
@@ -1278,13 +1279,14 @@ function drawBaseIndicator() {
 }
 
 // ==================== 事件处理 ====================
+// 使用 e.code（物理按键码，跨浏览器/语言100%一致）而非 e.key
 document.addEventListener('keydown', (e) => {
+    // 用 e.code 作为主键，这是最可靠的
+    keys[e.code] = true;
+    // 同时兼容 e.key（WASD 在不同布局下可能不同，但 code 始终一致）
     keys[e.key] = true;
-    // 兼容旧浏览器（如 Edge 旧版）使用 'Up'/'Down' 等键名
-    var _fb = {Up:'ArrowUp',Down:'ArrowDown',Left:'ArrowLeft',Right:'ArrowRight'};
-    if (_fb[e.key]) keys[_fb[e.key]] = true;
 
-    if (e.key === 'p' || e.key === 'P') {
+    if (e.code === 'KeyP') {
         if (gameState === 'playing') {
             gameState = 'paused';
         } else if (gameState === 'paused') {
@@ -1292,7 +1294,7 @@ document.addEventListener('keydown', (e) => {
         }
     }
 
-    if (e.key === 'Enter') {
+    if (e.code === 'Enter') {
         if (gameState === 'waiting') {
             sound.init();
             gameState = 'playing';
@@ -1300,16 +1302,15 @@ document.addEventListener('keydown', (e) => {
         }
     }
 
-    // 防止方向键滚动
-    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Up','Down','Left','Right',' '].includes(e.key)) {
+    // 防止方向键 + 空格滚动页面
+    if (e.code.startsWith('Arrow') || e.code === 'Space') {
         e.preventDefault();
     }
 });
 
 document.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
     keys[e.key] = false;
-    var _fb = {Up:'ArrowUp',Down:'ArrowDown',Left:'ArrowLeft',Right:'ArrowRight'};
-    if (_fb[e.key]) keys[_fb[e.key]] = false;
 });
 
 restartBtn.addEventListener('click', () => {
