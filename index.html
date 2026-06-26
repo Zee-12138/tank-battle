@@ -858,6 +858,8 @@ function loadLevel(lvl) {
     spawnIndex = 0;
     spawnTimer = 0;
     lastPlayerShot = 0;
+    lastTime = 0;
+    victoryTriggered = false;
 
     const numEnemies = ENEMIES_PER_LEVEL_BASE + (lvl - 1) * 2;
 
@@ -1003,12 +1005,14 @@ function gameOver(reason) {
     }
 }
 
+let victoryTriggered = false;
+
 function checkVictory() {
     if (enemiesRemaining <= 0 && spawnIndex >= enemySpawnQueue.length) {
         const allDead = enemies.every(e => !e.alive);
-        if (allDead) {
+        if (allDead && !victoryTriggered) {
+            victoryTriggered = true;
             sound.levelUp();
-            if (reason === 'victory_pending') return;
             gameOver('victory');
 
             // 自动进入下一关
@@ -1016,6 +1020,8 @@ function checkVictory() {
                 level++;
                 overlay.classList.remove('active');
                 gameState = 'playing';
+                victoryTriggered = false;
+                lastTime = 0;
                 loadLevel(level);
             }, 2500);
             return true;
