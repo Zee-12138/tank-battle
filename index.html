@@ -560,7 +560,7 @@ class Tank {
         ctx.translate(this.x, this.y);
 
         // 炮管方向旋转
-        const angles = [-Math.PI / 2, 0, Math.PI / 2, Math.PI]; // UP, RIGHT, DOWN, LEFT
+        const angles = [0, Math.PI / 2, Math.PI, -Math.PI / 2]; // UP, RIGHT, DOWN, LEFT
         ctx.rotate(angles[this.dir]);
 
         const s = this.size / 2;
@@ -1280,6 +1280,9 @@ function drawBaseIndicator() {
 // ==================== 事件处理 ====================
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
+    // 兼容旧浏览器（如 Edge 旧版）使用 'Up'/'Down' 等键名
+    var _fb = {Up:'ArrowUp',Down:'ArrowDown',Left:'ArrowLeft',Right:'ArrowRight'};
+    if (_fb[e.key]) keys[_fb[e.key]] = true;
 
     if (e.key === 'p' || e.key === 'P') {
         if (gameState === 'playing') {
@@ -1298,13 +1301,15 @@ document.addEventListener('keydown', (e) => {
     }
 
     // 防止方向键滚动
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Up','Down','Left','Right',' '].includes(e.key)) {
         e.preventDefault();
     }
 });
 
 document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
+    var _fb = {Up:'ArrowUp',Down:'ArrowDown',Left:'ArrowLeft',Right:'ArrowRight'};
+    if (_fb[e.key]) keys[_fb[e.key]] = false;
 });
 
 restartBtn.addEventListener('click', () => {
